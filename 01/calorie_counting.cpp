@@ -1,14 +1,9 @@
 #include <calorie_counting.hpp>
 
-#include <range/v3/range/conversion.hpp>
-#include <range/v3/range/primitives.hpp>
-#include <range/v3/algorithm/max_element.hpp>
-#include <range/v3/algorithm/partial_sort.hpp>
-#include <range/v3/numeric/accumulate.hpp>
-#include <range/v3/view/split.hpp>
-#include <range/v3/view/transform.hpp>
-
+#include <algorithm>
 #include <cassert>
+#include <ranges>
+#include <numeric>
 #include <optional>
 #include <string>
 
@@ -16,13 +11,13 @@ std::vector<Elf> parseInput(std::string_view input)
 {
     std::vector<Elf> ret;
     ret.emplace_back();
-    for (auto const sv : input | ranges::views::split('\n')) {
+    for (auto const sv : input | std::ranges::views::split('\n')) {
         Elf& current_elf = ret.back();
         if (sv.empty()) {
             assert(!current_elf.calories.empty());
             ret.emplace_back();
         } else {
-            current_elf.calories.push_back(std::stoi(ranges::to<std::string>(sv)));
+            current_elf.calories.push_back(std::stoi(std::ranges::to<std::string>(sv)));
         }
     }
     return ret;
@@ -30,13 +25,13 @@ std::vector<Elf> parseInput(std::string_view input)
 
 std::int64_t totalCalories(Elf const& e)
 {
-    return ranges::accumulate(e.calories, 0);
+    return std::accumulate(std::ranges::begin(e.calories), std::ranges::end(e.calories), std::int64_t{ 0 });
 }
 
 std::int64_t maxCalorieElf(std::vector<Elf> const& v)
 {
-    auto rng = v | ranges::views::transform(totalCalories);
-    return ranges::distance(ranges::begin(rng), ranges::max_element(rng));
+    auto rng = v | std::ranges::views::transform(totalCalories);
+    return std::ranges::distance(std::ranges::begin(rng), std::ranges::max_element(rng));
 }
 
 std::int64_t answer1(std::vector<Elf> const& v)
@@ -47,7 +42,7 @@ std::int64_t answer1(std::vector<Elf> const& v)
 
 std::int64_t answer2(std::vector<Elf> const& v)
 {
-    std::vector<std::int64_t> av = v | ranges::views::transform(totalCalories) | ranges::to<std::vector>;
-    ranges::partial_sort(av, ranges::begin(av) + 3, ranges::greater{});
-    return ranges::accumulate(ranges::subrange(ranges::begin(av), ranges::begin(av) + 3), 0);
+    std::vector<std::int64_t> av = v | std::ranges::views::transform(totalCalories) | std::ranges::to<std::vector>();
+    std::ranges::partial_sort(av, std::ranges::begin(av) + 3, std::ranges::greater{});
+    return std::accumulate(std::ranges::begin(av), std::ranges::begin(av) + 3, std::int64_t{ 0 });
 }

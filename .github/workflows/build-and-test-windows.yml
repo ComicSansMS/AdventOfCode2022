@@ -25,7 +25,6 @@ jobs:
       - name: 📦 Install dependencies
         run: |
             vcpkg install fmt
-            vcpkg install range-v3
       - name: 👷‍♂️ Build
         run: |
             cd build
