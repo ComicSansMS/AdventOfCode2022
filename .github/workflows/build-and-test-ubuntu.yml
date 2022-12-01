@@ -1,0 +1,55 @@
+name: Build and Test Ubuntu
+on: [push]
+jobs:
+  build:
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+        - {
+            name: "Ubuntu Latest gcc",
+            os: ubuntu-latest,
+            cc: "gcc-10",
+            cxx: "g++-10",
+          }
+        - {
+            name: "Ubuntu Latest clang",
+            os: ubuntu-latest,
+            cc: "clang-12",
+            cxx: "clang++-12",
+          }
+    env:
+      CC: ${{ matrix.config.cc }}
+      CXX: ${{ matrix.config.cxx }}
+    steps:
+      - uses: actions/checkout@v2
+      - run: echo "🏃‍♂️ Running job ${{ matrix.config.name }}."
+      - name: 📦 Install dependencies
+        run: sudo apt-get install -y librange-v3-dev libfmt-dev ninja-build
+      - name: 🔨 Compiler info
+        run: |
+            which cmake
+            cmake --version
+            which ${CXX}
+            ${CXX} --version
+      - name: 👷‍♂️ Build
+        run: |
+            cd build
+            cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DGENERATE_COVERAGE_INFO=ON -DGCOV_COMMAND=/usr/bin/gcov-10 ..
+            cmake --build .
+      - name: 🔍 Test
+        run: |
+            cd build
+            ctest -C Debug
+      - name: 👮‍♂️ Code Coverage
+        if: matrix.config.cc == 'gcc-10'
+        run: |
+            cd build
+            cmake --build . --target coverage
+            bash <(curl -s https://codecov.io/bash) -x /usr/bin/gcov-10 2> /dev/null
+      - name: 💯 Results
+        run: |
+            cd build
+            ./run.sh

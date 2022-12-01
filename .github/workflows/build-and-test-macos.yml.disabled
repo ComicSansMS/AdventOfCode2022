@@ -1,0 +1,46 @@
+name: Build and Test macOS
+on: [push]
+jobs:
+  build:
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+        - {
+            name: "macOS Latest clang",
+            os: macos-latest,
+            cc: "clang",
+            cxx: "clang++",
+          }
+    env:
+      CC: ${{ matrix.config.cc }}
+      CXX: ${{ matrix.config.cxx }}
+    steps:
+      - uses: actions/checkout@v2
+      - run: echo "🏃‍♂️ Running job ${{ matrix.config.name }}."
+      - name: 📦 Install dependencies
+        run: brew install fmt range-v3 ninja
+      - name: 🔨 Compiler info
+        run: |
+            which cmake
+            cmake --version
+            which ${CXX}
+            ${CXX} --version
+      - name: 👷‍♂️ Build
+        run: |
+            export CC=$(brew --prefix llvm)/bin/clang
+            export CXX=$(brew --prefix llvm)/bin/clang++
+            ${CXX} --version
+            cd build
+            cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug ..
+            cmake --build .
+      - name: 🔍 Test
+        run: |
+            cd build
+            ctest -C Debug
+      - name: 💯 Results
+        run: |
+            cd build
+            ./run.sh

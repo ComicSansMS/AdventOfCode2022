@@ -1,0 +1,41 @@
+name: Build and Test MSVC
+on: [push]
+jobs:
+  build:
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+        - {
+            name: "Windows Latest MSVC",
+            os: windows-2022,
+            cc: "cl",
+            cxx: "cl",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+          }
+    env:
+      CC: ${{ matrix.config.cc }}
+      CXX: ${{ matrix.config.cxx }}
+      VCPKG_DEFAULT_TRIPLET: x64-windows
+    steps:
+      - uses: actions/checkout@v2
+      - run: echo "🏃‍♂️ Running job ${{ matrix.config.name }}."
+      - name: 📦 Install dependencies
+        run: |
+            vcpkg install fmt
+            vcpkg install range-v3
+      - name: 👷‍♂️ Build
+        run: |
+            cd build
+            cmake -G "Visual Studio 17 2022" -A x64 -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake ..
+            cmake --build . --config Debug -j
+      - name: 🔍 Test
+        run: |
+            cd build
+            ctest -C Debug
+      - name: 💯 Results
+        run: |
+            cd build
+            .\run.cmd
