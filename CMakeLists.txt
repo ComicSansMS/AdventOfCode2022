@@ -52,7 +52,6 @@ if(NOT EXISTS ${PROJECT_BINARY_DIR}/external/catch/catch.hpp)
 endif()
 add_library(Catch STATIC ${PROJECT_SOURCE_DIR}/external/catch/catch_main.cpp)
 target_include_directories(Catch PUBLIC ${PROJECT_BINARY_DIR}/external/catch)
-#target_compile_definitions(Catch PUBLIC $<$<CXX_COMPILER_ID:MSVC>:_SILENCE_CXX17_UNCAUGHT_EXCEPTION_DEPRECATION_WARNING>)
 
 find_package(range-v3 REQUIRED)
 find_package(fmt REQUIRED)
