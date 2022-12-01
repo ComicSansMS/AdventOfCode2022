@@ -17,8 +17,8 @@ jobs:
         - {
             name: "Ubuntu Latest clang",
             os: ubuntu-latest,
-            cc: "clang-12",
-            cxx: "clang++-12",
+            cc: "clang-14",
+            cxx: "clang++-14",
           }
     env:
       CC: ${{ matrix.config.cc }}
