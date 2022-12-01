@@ -11,8 +11,8 @@ jobs:
         - {
             name: "Ubuntu Latest gcc",
             os: ubuntu-latest,
-            cc: "gcc-10",
-            cxx: "g++-10",
+            cc: "gcc-11",
+            cxx: "g++-11",
           }
         - {
             name: "Ubuntu Latest clang",
@@ -37,18 +37,18 @@ jobs:
       - name: 👷‍♂️ Build
         run: |
             cd build
-            cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DGENERATE_COVERAGE_INFO=ON -DGCOV_COMMAND=/usr/bin/gcov-10 ..
+            cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DGENERATE_COVERAGE_INFO=ON -DGCOV_COMMAND=/usr/bin/gcov-11 ..
             cmake --build .
       - name: 🔍 Test
         run: |
             cd build
             ctest -C Debug
       - name: 👮‍♂️ Code Coverage
-        if: matrix.config.cc == 'gcc-10'
+        if: matrix.config.cc == 'gcc-11'
         run: |
             cd build
             cmake --build . --target coverage
-            bash <(curl -s https://codecov.io/bash) -x /usr/bin/gcov-10 2> /dev/null
+            bash <(curl -s https://codecov.io/bash) -x /usr/bin/gcov-11 2> /dev/null
       - name: 💯 Results
         run: |
             cd build
