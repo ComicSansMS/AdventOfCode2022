@@ -1,6 +1,6 @@
 add_library(01_calorie_counting STATIC calorie_counting.hpp calorie_counting.cpp)
 target_include_directories(01_calorie_counting PUBLIC ${CMAKE_CURRENT_LIST_DIR})
-target_link_libraries(01_calorie_counting PUBLIC fmt::fmt)
+target_link_libraries(01_calorie_counting PUBLIC fmt::fmt range-v3)
 add_executable(advent01 advent01.cpp)
 target_link_libraries(advent01 PUBLIC 01_calorie_counting)
 

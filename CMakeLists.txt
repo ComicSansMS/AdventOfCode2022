@@ -53,6 +53,7 @@ endif()
 add_library(Catch STATIC ${PROJECT_SOURCE_DIR}/external/catch/catch_main.cpp)
 target_include_directories(Catch PUBLIC ${PROJECT_BINARY_DIR}/external/catch)
 
+find_package(range-v3 REQUIRED)
 find_package(fmt REQUIRED)
 
 add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/W4>)

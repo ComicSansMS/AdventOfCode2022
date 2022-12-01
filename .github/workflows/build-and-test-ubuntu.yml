@@ -27,7 +27,7 @@ jobs:
       - uses: actions/checkout@v2
       - run: echo "🏃‍♂️ Running job ${{ matrix.config.name }}."
       - name: 📦 Install dependencies
-        run: sudo apt-get install -y libfmt-dev ninja-build
+        run: sudo apt-get install -y librange-v3-dev libfmt-dev ninja-build
       - name: 🔨 Compiler info
         run: |
             which cmake
