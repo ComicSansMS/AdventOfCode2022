@@ -15,9 +15,9 @@ TEST_CASE("Rock Paper Scissors")
     {
         REQUIRE(turns.size() == 3);
         CHECK(turns == std::vector<Turn>{
-            { .opponent = { Play::Rock }, .second = { Second::Y } },
-            { .opponent = { Play::Paper }, .second = { Second::X } },
-            { .opponent = { Play::Scissors }, .second = { Second::Z } },
+            { .opponent = Play::Rock,     .second = Second::Y },
+            { .opponent = Play::Paper,    .second = Second::X },
+            { .opponent = Play::Scissors, .second = Second::Z },
         });
     }
 
@@ -26,9 +26,9 @@ TEST_CASE("Rock Paper Scissors")
     SECTION("Decode Turn")
     {
         CHECK(decoded_rounds1 == std::vector<Round>{
-            {.opponent = { Play::Rock }, .me = { Play::Paper } },
-            {.opponent = { Play::Paper }, .me = { Play::Rock } },
-            {.opponent = { Play::Scissors }, .me = { Play::Scissors } },
+            {.opponent = Play::Rock,     .me = Play::Paper    },
+            {.opponent = Play::Paper,    .me = Play::Rock     },
+            {.opponent = Play::Scissors, .me = Play::Scissors },
         });
     }
 
@@ -44,9 +44,9 @@ TEST_CASE("Rock Paper Scissors")
     {
         auto decoded_rounds2 = decodeTurnProper(turns);
         CHECK(decoded_rounds2 == std::vector<Round>{
-            {.opponent = { Play::Rock }, .me = { Play::Rock } },
-            { .opponent = { Play::Paper }, .me = { Play::Rock } },
-            { .opponent = { Play::Scissors }, .me = { Play::Rock } },
+            { .opponent = Play::Rock,     .me = Play::Rock },
+            { .opponent = Play::Paper,    .me = Play::Rock },
+            { .opponent = Play::Scissors, .me = Play::Rock },
         });
         CHECK(totalScore(decoded_rounds2) == 12);
     }

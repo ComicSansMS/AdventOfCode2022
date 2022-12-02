@@ -12,7 +12,7 @@
 
 std::vector<Turn> parseInput(std::string_view input)
 {
-    std::regex rx_line(R"(^([A-C]) ([X-Z])$)");
+    std::regex rx_line(R"(([A-C]) ([X-Z]))");
 
     using regex_it = std::regex_iterator<std::string_view::iterator>;
     auto const it_begin = regex_it(begin(input), end(input), rx_line);
