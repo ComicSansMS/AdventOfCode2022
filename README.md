@@ -10,4 +10,4 @@ My solutions for the [Advent of Code 2021](https://adventofcode.com/2022/) chall
 
 All solutions are written in C++23 and should work with any valid input from the challenge.
 
-Use CMake to build (gcc10, clang12 or MSVC2022 required).
+Use CMake to build (gcc11, clang14 or MSVC2022 required).
