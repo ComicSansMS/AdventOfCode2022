@@ -26,9 +26,9 @@ TEST_CASE("Rock Paper Scissors")
     SECTION("Decode Turn")
     {
         CHECK(decoded_rounds1 == std::vector<Round>{
-            {.opponent = Play::Rock,     .me = Play::Paper    },
-            {.opponent = Play::Paper,    .me = Play::Rock     },
-            {.opponent = Play::Scissors, .me = Play::Scissors },
+            { .opponent = Play::Rock,     .me = Play::Paper    },
+            { .opponent = Play::Paper,    .me = Play::Rock     },
+            { .opponent = Play::Scissors, .me = Play::Scissors },
         });
     }
 
@@ -48,6 +48,8 @@ TEST_CASE("Rock Paper Scissors")
             { .opponent = Play::Paper,    .me = Play::Rock },
             { .opponent = Play::Scissors, .me = Play::Rock },
         });
+        CHECK(decodeTurnProper(std::vector<Turn>{ { .opponent = Play::Rock, .second = Second::X } })
+            == std::vector<Round>{ { .opponent = Play::Rock, .me = Play::Scissors } });
         CHECK(totalScore(decoded_rounds2) == 12);
     }
 }
