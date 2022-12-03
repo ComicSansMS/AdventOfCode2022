@@ -56,6 +56,7 @@ TEST_CASE("Rucksack Reorganization")
 
     SECTION("Common Item")
     {
+        CHECK(commonItem(Rucksack{}) == 0);
         CHECK(commonItem(rucksacks[0]) == 16);
         CHECK(commonItem(rucksacks[1]) == 38);
         CHECK(commonItem(rucksacks[2]) == 42);
@@ -67,6 +68,7 @@ TEST_CASE("Rucksack Reorganization")
 
     SECTION("Common Group Item")
     {
+        CHECK(commonGroupItem(Rucksack{}, Rucksack{}, Rucksack{}) == 0);
         CHECK(commonGroupItem(rucksacks[0], rucksacks[1], rucksacks[2]) == 18);
         CHECK(commonGroupItem(rucksacks[3], rucksacks[4], rucksacks[5]) == 52);
         CHECK(answer2(rucksacks) == 70);
