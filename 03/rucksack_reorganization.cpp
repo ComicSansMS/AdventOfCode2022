@@ -3,7 +3,7 @@
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/range/primitives.hpp>
 #include <range/v3/numeric/accumulate.hpp>
-#include <range/v3/view/transform.hpp>
+#include <range/v3/view/chunk.hpp>
 
 #include <cassert>
 #include <optional>
@@ -70,9 +70,6 @@ int commonGroupItem(Rucksack const& r1, Rucksack const& r2, Rucksack const& r3)
 int answer2(std::vector<Rucksack> const& rucksacks)
 {
     assert((rucksacks.size() % 3) == 0);
-    int acc = 0;
-    for (std::size_t i = 0, i_end = rucksacks.size(); i < i_end; i += 3) {
-        acc += commonGroupItem(rucksacks[i], rucksacks[i + 1], rucksacks[i + 2]);
-    }
-    return acc;
+    return ranges::accumulate(rucksacks | ranges::views::chunk(3), 0, ranges::plus{},
+                              [](auto const& r) -> int { return commonGroupItem(r[0], r[1], r[2]); });
 }
