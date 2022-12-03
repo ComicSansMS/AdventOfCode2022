@@ -2,8 +2,10 @@
 
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/range/primitives.hpp>
+#include <range/v3/algorithm/find_if.hpp>
 #include <range/v3/numeric/accumulate.hpp>
 #include <range/v3/view/chunk.hpp>
+#include <range/v3/view/indices.hpp>
 
 #include <cassert>
 #include <optional>
@@ -45,10 +47,8 @@ std::vector<Rucksack> parseInput(std::string_view input)
 
 int commonItem(Rucksack const& r)
 {
-    for (int i = 1; i <= 52; ++i) {
-        if ((r.first[i] > 0) && (r.second[i] > 0)) { return i; }
-    }
-    return 0;
+    return *ranges::find_if(ranges::views::closed_indices(1, 52),
+                            [&r](int i) { return (r.first[i] > 0) && (r.second[i] > 0); });
 }
 
 int answer1(std::vector<Rucksack> const& rucksacks)
@@ -61,10 +61,8 @@ int commonGroupItem(Rucksack const& r1, Rucksack const& r2, Rucksack const& r3)
     auto const hasItem = [](Rucksack const& r, int item) -> bool {
         return (r.first[item] > 0) || (r.second[item] > 0);
     };
-    for (int i = 1; i <= 52; ++i) {
-        if (hasItem(r1, i) && hasItem(r2, i) && hasItem(r3, i)) { return i; }
-    }
-    return 0;
+    return *ranges::find_if(ranges::views::closed_indices(1, 52),
+                            [&](int i) { return hasItem(r1, i) && hasItem(r2, i) && hasItem(r3, i); });
 }
 
 int answer2(std::vector<Rucksack> const& rucksacks)
