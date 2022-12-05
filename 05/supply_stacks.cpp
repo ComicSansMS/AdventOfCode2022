@@ -36,7 +36,7 @@ Input parseInput(std::string_view input)
             char const c = line[(i * 4) + 1];
             if (std::isdigit(c)) {
                 last_stack_line = true;
-                assert((c - '0') == i + 1);
+                assert(static_cast<std::size_t>(c - '0') == i + 1);
             } else if (c == ' ') {
                 // empty place on stack
                 assert(field.stacks[i].empty());
