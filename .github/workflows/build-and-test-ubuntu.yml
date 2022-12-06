@@ -24,7 +24,7 @@ jobs:
       CC: ${{ matrix.config.cc }}
       CXX: ${{ matrix.config.cxx }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: echo "🏃‍♂️ Running job ${{ matrix.config.name }}."
       - name: 📦 Install dependencies
         run: sudo apt-get install -y librange-v3-dev libfmt-dev ninja-build

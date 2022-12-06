@@ -20,7 +20,7 @@ jobs:
       CXX: ${{ matrix.config.cxx }}
       VCPKG_DEFAULT_TRIPLET: x64-windows
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: echo "🏃‍♂️ Running job ${{ matrix.config.name }}."
       - name: 📦 Install dependencies
         run: |
