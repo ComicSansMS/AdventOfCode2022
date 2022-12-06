@@ -16,7 +16,7 @@ std::string::const_iterator findMarker(std::string const& str, int window_size)
 {
     auto const it = ranges::find_if(str | ranges::views::sliding(window_size), [](auto w) {
             bool check[256] = {};
-            for (char const c : w) {
+            for (int const c : w) {
                 if (check[c]) { return false; } else { check[c] = true; }
             }
             return true;
