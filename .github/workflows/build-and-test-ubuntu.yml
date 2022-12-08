@@ -23,11 +23,21 @@ jobs:
     env:
       CC: ${{ matrix.config.cc }}
       CXX: ${{ matrix.config.cxx }}
+      mdspan_ROOT: ${{github.workspace}}/mdspan/install
     steps:
       - uses: actions/checkout@v3
       - run: echo "🏃‍♂️ Running job ${{ matrix.config.name }}."
+      - name: Checkout mdspan
+        uses: actions/checkout@v3
+        with:
+            repository: kokkos/mdspan
+            path: mdspan
       - name: 📦 Install dependencies
-        run: sudo apt-get install -y librange-v3-dev libfmt-dev ninja-build
+        run: |
+            cmake -S ${{github.workspace}}/mdspan -B ${{github.workspace}}/mdspan/build -DCMAKE_BUILD_TYPE=Debug
+            cmake --build ${{github.workspace}}/mdspan/build --config Debug
+            cmake --install ${{github.workspace}}/mdspan/build --prefix=${{env.mdspan_ROOT}} --config Debug
+            sudo apt-get install -y librange-v3-dev libfmt-dev ninja-build
       - name: 🔨 Compiler info
         run: |
             which cmake
