@@ -55,6 +55,7 @@ target_include_directories(Catch PUBLIC ${PROJECT_BINARY_DIR}/external/catch)
 
 find_package(range-v3 REQUIRED)
 find_package(fmt REQUIRED)
+find_package(mdspan REQUIRED)
 
 add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/W4>)
 add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/permissive->)

@@ -26,6 +26,7 @@ jobs:
         run: |
             vcpkg install fmt
             vcpkg install range-v3
+            vcpkg install mdspan
       - name: 👷‍♂️ Build
         run: |
             cd build
