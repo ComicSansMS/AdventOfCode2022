@@ -12,24 +12,20 @@
 
 Field parseInput(std::string_view input)
 {
-    std::vector<int> data;
+    Field ret;
     int field_width = 0;
     int field_height = 0;
+    auto const char_to_int = [](char c) -> int {
+        assert((c >= '0') && (c <= '9'));
+        return c - '0';
+    };
     for (auto const line : input | ranges::views::split('\n')) {
-        std::vector<int> const line_numbers =
-            line
-            | ranges::views::transform([](char c) -> int {
-                    assert((c >= '0') && (c <= '9'));
-                    return c - '0';
-                })
-            | ranges::to<std::vector>;
+        std::vector<int> const line_numbers = line | ranges::views::transform(char_to_int) | ranges::to<std::vector>;
         if (field_width == 0) { field_width = static_cast<int>(line_numbers.size()); }
         assert(field_width == static_cast<int>(line_numbers.size()));
-        data.insert(ranges::end(data), ranges::begin(line_numbers), ranges::end(line_numbers));
+        ret.data.insert(ranges::end(ret.data), ranges::begin(line_numbers), ranges::end(line_numbers));
         ++field_height;
     }
-    Field ret;
-    ret.data = std::move(data);
     ret.span = decltype(ret.span){ ret.data.data(), field_width, field_height };
     return ret;
 }
