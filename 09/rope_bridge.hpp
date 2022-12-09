@@ -110,9 +110,8 @@ inline void movePoint(Point& p, Direction dir)
 template<std::size_t N>
 void moveHead(Rope<N>& rope, Direction dir)
 {
-    auto old_head_position = rope.head();
     movePoint(rope.head(), dir);
-    for (int i = 0; i < N - 1; ++i) {
+    for (std::size_t i = 0; i < N - 1; ++i) {
         Point const& head = rope.knots[i];
         Point& tail = rope.knots[i + 1];
         int const dx = head.x - tail.x;
