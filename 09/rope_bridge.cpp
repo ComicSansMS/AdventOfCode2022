@@ -20,12 +20,16 @@ std::vector<Instruction> parseInput(std::string_view input)
     std::transform(it_begin, it_end, std::back_inserter(ret),
         [](std::match_results<std::string_view::iterator> const& match) -> Instruction {
             Direction const direction = [](auto d) {
-                switch (*d.first) {
-                default: assert(!"Invalid direction"); [[fallthrough]];
-                case 'L': return Direction::Left;
-                case 'R': return Direction::Right;
-                case 'U': return Direction::Up;
-                case 'D': return Direction::Down;
+                char const  c = *d.first;
+                if (c == 'L') {
+                    return Direction::Left;
+                } else if (c == 'R') {
+                    return Direction::Right;
+                } else if (c == 'U') {
+                    return Direction::Up;
+                } else {
+                    assert(c == 'D');
+                    return Direction::Down;
                 }
             }(match[1]);
             return Instruction{

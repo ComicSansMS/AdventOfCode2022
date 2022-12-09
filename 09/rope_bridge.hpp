@@ -38,10 +38,10 @@ inline void hash_combine(std::size_t& seed, const T& v)
 }
 
 struct Point {
-    int x;
-    int y;
+    int x;                                                  // LCOV_EXCL_LINE
+    int y;                                                  // LCOV_EXCL_LINE
 
-    friend bool operator==(Point, Point) = default;
+    friend bool operator==(Point, Point) = default;         // LCOV_EXCL_LINE
 };
 
 template<>
@@ -103,7 +103,7 @@ inline void movePoint(Point& p, Direction dir)
     case Direction::Right:
         ++p.x;
         break;
-    default: assert(!"Invalid direction"); break;
+    default: assert(!"Invalid direction"); break;       // LCOV_EXCL_LINE
     }
 }
 
