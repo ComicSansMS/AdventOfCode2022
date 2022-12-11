@@ -9,6 +9,7 @@
 #include <range/v3/view/transform.hpp>
 
 #include <cassert>
+#include <concepts>
 #include <cmath>
 #include <string>
 
@@ -101,17 +102,23 @@ std::int64_t executeOp(Operation const& op, std::int64_t item) {
     }
 }
 
-void playTurn(std::vector<Monkey>& monkeys, std::size_t active_monkey_index)
+template<std::regular_invocable<std::int64_t> Func_T>
+void playTurn(std::vector<Monkey>& monkeys, std::size_t active_monkey_index, Func_T&& decay_func)
 {
     assert((active_monkey_index >= 0) && (active_monkey_index < monkeys.size()));
     auto& monkey = monkeys[active_monkey_index];
     for (auto const& item : monkey.items) {
-        auto const new_item = executeOp(monkey.operation, item) / 3;
+        auto const new_item = decay_func(executeOp(monkey.operation, item));
         auto const target_index = ((new_item % monkey.test_divisor) == 0) ? monkey.monkey_true : monkey.monkey_false;
         monkeys[target_index].items.push_back(new_item);
     }
     monkey.inspection_count += monkey.items.size();
     monkey.items.clear();
+}
+
+void playTurn(std::vector<Monkey>& monkeys, std::size_t active_monkey_index)
+{
+    playTurn(monkeys, active_monkey_index, [](std::int64_t i) { return i / 3; });
 }
 
 void playRound(std::vector<Monkey>& monkeys)
@@ -149,15 +156,7 @@ std::int64_t determineNeutralDecay(std::vector<Monkey> const& monkeys)
 
 void playTurn(std::vector<Monkey>& monkeys, std::size_t active_monkey_index, std::int64_t neutral_decay)
 {
-    assert((active_monkey_index >= 0) && (active_monkey_index < monkeys.size()));
-    auto& monkey = monkeys[active_monkey_index];
-    for (auto const& item : monkey.items) {
-        auto const new_item = executeOp(monkey.operation, item) % neutral_decay;
-        auto const target_index = ((new_item % monkey.test_divisor) == 0) ? monkey.monkey_true : monkey.monkey_false;
-        monkeys[target_index].items.push_back(new_item);
-    }
-    monkey.inspection_count += monkey.items.size();
-    monkey.items.clear();
+    playTurn(monkeys, active_monkey_index, [neutral_decay](std::int64_t i) { return i % neutral_decay; });
 }
 
 void playRound(std::vector<Monkey>& monkeys, std::int64_t neutral_decay)
@@ -180,4 +179,3 @@ std::int64_t answer2(std::vector<Monkey> const& monkeys)
     playRounds(m, 10000, determineNeutralDecay(m));
     return scoreMonkeyBusiness(m);
 }
-
