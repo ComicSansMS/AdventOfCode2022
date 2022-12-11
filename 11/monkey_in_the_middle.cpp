@@ -36,7 +36,7 @@ std::vector<Monkey> parseInput(std::string_view input)
         case ParserState::ExpectMonkey:
             assert(l.starts_with("Monkey "));
             assert(l.ends_with(":"));
-            assert(std::stoi(l.substr(7, 1)) == ret.size());
+            assert(std::stoi(l.substr(7, 1)) == static_cast<int>(ret.size()));
             ret.emplace_back();
             ret.back().inspection_count = 0;
             advanceState(state);
@@ -46,7 +46,8 @@ std::vector<Monkey> parseInput(std::string_view input)
             ret.back().items = l
                 | ranges::views::drop(17)
                 | ranges::views::split(',')
-                | ranges::views::transform([](auto sn) { return std::stoll(ranges::to<std::string>(sn)); })
+                | ranges::views::transform([](auto sn) -> std::int64_t
+                                           { return std::stoi(ranges::to<std::string>(sn)); })
                 | ranges::to<std::vector>;
             advanceState(state);
             break;
