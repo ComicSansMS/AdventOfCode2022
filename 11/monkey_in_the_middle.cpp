@@ -106,7 +106,7 @@ std::int64_t executeOp(Operation const& op, std::int64_t item) {
 template<std::regular_invocable<std::int64_t> Func_T>
 void playTurn(std::vector<Monkey>& monkeys, std::size_t active_monkey_index, Func_T&& decay_func)
 {
-    assert((active_monkey_index >= 0) && (active_monkey_index < monkeys.size()));
+    assert(active_monkey_index < monkeys.size());
     auto& monkey = monkeys[active_monkey_index];
     for (auto const& item : monkey.items) {
         auto const new_item = decay_func(executeOp(monkey.operation, item));
