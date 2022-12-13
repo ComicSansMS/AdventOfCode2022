@@ -46,7 +46,7 @@ List parseList_rec(std::string_view line)
         }
         it = it_sep;
     }
-    return std::move(ret);
+    return ret;
 }
 
 ListElement parseListElement(std::string_view line)

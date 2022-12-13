@@ -7,8 +7,11 @@
 #include <variant>
 #include <vector>
 
-struct List;
+struct ListElement;
 
+struct List {
+    std::vector<ListElement> elements;
+};
 using ListPtr = std::unique_ptr<List>;
 
 struct ListElement {
@@ -34,10 +37,6 @@ struct ListElement {
     }
     
     friend inline bool operator==(ListElement const& lhs, ListElement const& rhs) noexcept;
-};
-
-struct List {
-    std::vector<ListElement> elements;
 };
 
 inline bool isNumber(ListElement const& l) {
