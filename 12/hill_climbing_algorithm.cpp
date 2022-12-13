@@ -52,7 +52,7 @@ AllPaths allPaths(Map const& m, std::vector<Point> const& start_points)
     std::unordered_set<Point, HashPoint> visited;
     auto const addPoint = [&stack, &visited](Point const& p, int distance) {
         visited.insert(p);
-        stack.emplace_back(p, distance);
+        stack.emplace_back(StackElement{ p, distance });
     };
     for (auto const& p : start_points) { addPoint(p, 0); }
 
