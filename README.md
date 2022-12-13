@@ -6,7 +6,7 @@ Advent of Code 2022
 [![codecov.io](https://codecov.io/github/ComicSansMS/AdventOfCode2022/coverage.svg?branch=main)](https://codecov.io/github/ComicSansMS/AdventOfCode2022/branch/main)
 
 
-My solutions for the [Advent of Code 2021](https://adventofcode.com/2022/) challenge.
+My solutions for the [Advent of Code 2022](https://adventofcode.com/2022/) challenge.
 
 All solutions are written in C++23 and should work with any valid input from the challenge.
 
