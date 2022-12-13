@@ -25,9 +25,6 @@ struct ListElement {
         :v(std::move(p))
     {}
 
-    ListElement(ListElement&&) noexcept = default;
-    ListElement& operator=(ListElement&&) noexcept = default;
-
     List const& asList() const {
         return *std::get<ListPtr>(v);
     }
@@ -35,28 +32,14 @@ struct ListElement {
     std::int64_t asInt() const {
         return std::get<std::int64_t>(v);
     }
-    
-    friend inline bool operator==(ListElement const& lhs, ListElement const& rhs) noexcept;
 };
 
-inline bool isNumber(ListElement const& l) {
+inline bool isNumber(ListElement const& l) noexcept {
     return l.v.index() == 0;
 }
 
-inline bool isList(ListElement const& l) {
+inline bool isList(ListElement const& l) noexcept {
     return l.v.index() == 1;
-}
-
-inline bool operator==(ListElement const& lhs, ListElement const& rhs) noexcept
-{
-    if (lhs.v.index() != rhs.v.index()) {
-        return false;
-    }
-    if (isNumber(lhs)) {
-        return std::get<std::int64_t>(lhs.v) == std::get<std::int64_t>(rhs.v);
-    } else {
-        return std::get<ListPtr>(lhs.v)->elements == std::get<ListPtr>(rhs.v)->elements;
-    }
 }
 
 std::weak_ordering operator<=>(ListElement const& lhs, ListElement const& rhs);

@@ -125,7 +125,7 @@ TEST_CASE("Distress Signal")
         REQUIRE(data[7].lhs.elements[1].asList().elements.size() == 2);
         CHECK(data[7].lhs.elements[1].asList().elements[0].asInt() == 2);
         REQUIRE(data[7].lhs.elements[1].asList().elements[1].asList().elements.size() == 2);
-        CHECK(data[7].lhs.elements[1].asList().elements[1].asList().elements[0] == 3);
+        CHECK(data[7].lhs.elements[1].asList().elements[1].asList().elements[0].asInt() == 3);
         REQUIRE(data[7].lhs.elements[1].asList().elements[1].asList().elements[1].asList().elements.size() == 2);
         CHECK(data[7].lhs.elements[1].asList().elements[1].asList().elements[1].asList().elements[0].asInt() == 4);
         REQUIRE(data[7].lhs.elements[1].asList().elements[1].asList().elements[1].asList().elements[1].asList().elements.size() == 3);
@@ -140,7 +140,7 @@ TEST_CASE("Distress Signal")
         REQUIRE(data[7].rhs.elements[1].asList().elements.size() == 2);
         CHECK(data[7].rhs.elements[1].asList().elements[0].asInt() == 2);
         REQUIRE(data[7].rhs.elements[1].asList().elements[1].asList().elements.size() == 2);
-        CHECK(data[7].rhs.elements[1].asList().elements[1].asList().elements[0] == 3);
+        CHECK(data[7].rhs.elements[1].asList().elements[1].asList().elements[0].asInt() == 3);
         REQUIRE(data[7].rhs.elements[1].asList().elements[1].asList().elements[1].asList().elements.size() == 2);
         CHECK(data[7].rhs.elements[1].asList().elements[1].asList().elements[1].asList().elements[0].asInt() == 4);
         REQUIRE(data[7].rhs.elements[1].asList().elements[1].asList().elements[1].asList().elements[1].asList().elements.size() == 3);
