@@ -184,8 +184,8 @@ int answer2(std::vector<Line> const& lines)
     auto const [bmin, bmax] = determineBounds(lines);
     auto ls = lines;
     Line bottom;
-    bottom.segments.push_back(LineSegment{ .start = { bmin.x - 150, bmax.y + 2 },
-                                           .end =   { bmax.x + 150, bmax.y + 2 } });
+    bottom.segments.push_back(LineSegment{ .start = { bmin.x - 150, bmax.y + 2 },       // LCOV_EXCL_LINE
+                                           .end =   { bmax.x + 150, bmax.y + 2 } });    // LCOV_EXCL_LINE
     ls.push_back(bottom);
     auto f = buildField(ls);
     return answer1(f) + 1;
