@@ -97,8 +97,8 @@ struct FieldSpanLayout {
         template<class RowIndex, class ColIndex>
         constexpr size_type
         operator()(RowIndex row, ColIndex col) const noexcept {
-            assert((row >= start_.x) && (row < start_.x + extents_.extent(0)));
-            assert((col >= start_.y) && (col < start_.y + extents_.extent(1)));
+            assert((row >= start_.x) && (row < start_.x + extents_.extent(0)));     // LCOV_EXCL_LINE
+            assert((col >= start_.y) && (col < start_.y + extents_.extent(1)));     // LCOV_EXCL_LINE
             return (col - start_.y) * extents_.extent(0) + (row - start_.x);
         }
 

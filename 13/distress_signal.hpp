@@ -34,13 +34,13 @@ struct ListElement {
     }
 };
 
-inline bool isNumber(ListElement const& l) noexcept {
-    return l.v.index() == 0;
-}
+inline bool isNumber(ListElement const& l) noexcept {       // LCOV_EXCL_LINE
+    return l.v.index() == 0;                                // LCOV_EXCL_LINE
+}                                                           // LCOV_EXCL_LINE
 
-inline bool isList(ListElement const& l) noexcept {
-    return l.v.index() == 1;
-}
+inline bool isList(ListElement const& l) noexcept {         // LCOV_EXCL_LINE
+    return l.v.index() == 1;                                // LCOV_EXCL_LINE
+}                                                           // LCOV_EXCL_LINE
 
 std::weak_ordering operator<=>(ListElement const& lhs, ListElement const& rhs);
 std::weak_ordering operator<=>(List const& lhs, List const& rhs);
