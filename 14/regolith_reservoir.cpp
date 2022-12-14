@@ -124,7 +124,7 @@ Field buildField(std::vector<Line> const& lines)
 {
     auto const [bmin, bmax] = determineBounds(lines);
     Field ret(bmin, bmax);
-    for (auto const l : lines) {
+    for (auto const& l : lines) {
         drawLine(ret.field, l);
     }
     return ret;

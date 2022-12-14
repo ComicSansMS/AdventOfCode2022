@@ -2,6 +2,8 @@
 
 #include <catch.hpp>
 
+#include <sstream>
+
 TEST_CASE("Distress Signal")
 {
     SECTION("Point to String")
