@@ -13,6 +13,14 @@ TEST_CASE("Beacon Exclusion Zone")
         CHECK(sstr.str() == "(42, -23)");
     }
 
+    SECTION("Range to String")
+    {
+        std::stringstream sstr;
+        sstr << Range{ .start = 42, .stop = -23 };
+        CHECK(sstr.str() == "42, -23");
+    }
+
+
     char const sample_input[] =
         "Sensor at x=2, y=18: closest beacon is at x=-2, y=15"  "\n"
         "Sensor at x=9, y=16: closest beacon is at x=10, y=16"  "\n"

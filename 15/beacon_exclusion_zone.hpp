@@ -37,22 +37,6 @@ inline std::ostream& operator<<(std::ostream& os, Point const& p) {
     return os << fmt::format("{}", p);
 }
 
-template <class T>
-inline void hash_combine(std::size_t& seed, const T& v)
-{
-    std::hash<T> hasher;
-    seed ^= hasher(v) + 0x9e3779b9 + (seed<<6) + (seed>>2);
-}
-
-struct HashPoint {
-    inline std::size_t operator()(Point const& v) const {
-        std::size_t seed = 0;
-        hash_combine(seed, v.x);
-        hash_combine(seed, v.y);
-        return seed;
-    }
-};
-
 struct SensorBeaconPair {
     Point sensor;
     Point beacon;
