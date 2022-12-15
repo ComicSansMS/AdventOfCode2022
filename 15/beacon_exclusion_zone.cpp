@@ -114,5 +114,5 @@ std::int64_t answer2(std::vector<SensorBeaconPair> const& sbs, Range const& scan
             return static_cast<std::int64_t>(free_x) * 4000000 + static_cast<std::int64_t>(iy);
         }
     }
-    return -1;
+    return -1;                  // LCOV_EXCL_LINE
 }
