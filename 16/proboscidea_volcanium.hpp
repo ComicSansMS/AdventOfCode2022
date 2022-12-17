@@ -47,4 +47,6 @@ std::vector<int> extractFlows(std::vector<Valve> const& valves, ValveIndexMap co
 
 int64_t answer1(std::vector<Valve> const& valves);
 
+int64_t answer2(std::vector<Valve> const& valves);
+
 #endif

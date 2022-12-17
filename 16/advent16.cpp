@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
     auto const vmap = valveIndexMap(valves);
     auto const m = allPairsShortestPath(adjacency(valves, vmap));
     fmt::print("First result is {}\n", answer1(valves));
-    //fmt::print("Second result is {}\n", answer2(beacon_pairs, Range{ .start = 0, .stop = 4000000 }));
+    //fmt::print("Second result is {}\n", answer2(valves));
 
     return 0;
 }

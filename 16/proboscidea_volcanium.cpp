@@ -116,14 +116,15 @@ Matrix allPairsShortestPath(Matrix const& m)
     return r;
 }
 
-PathScore pathScore(Matrix const& apsp, std::vector<int> const& flows, std::vector<int> const& path)
+PathScore pathScore_it(Matrix const& apsp, std::vector<int> const& flows,
+    std::vector<int>::const_iterator it_path_begin, std::vector<int>::const_iterator it_path_end)
 {
     int score = 0;
     int minutes_remain = 30;
     int current_node = 0;
     int terminates_at = 0;
     std::experimental::mdspan m(apsp.m.data(), apsp.dimension, apsp.dimension);
-    for (auto const& n : path) {
+    for (auto const& n : ranges::subrange(it_path_begin, it_path_end)) {
         int const path_cost = m(current_node, n);
         int const valve_open = 1;
         minutes_remain -= path_cost + valve_open;
@@ -133,7 +134,11 @@ PathScore pathScore(Matrix const& apsp, std::vector<int> const& flows, std::vect
         ++terminates_at;
     }
     return PathScore{ .score = score, .terminatesAt = terminates_at };
+}
 
+PathScore pathScore(Matrix const& apsp, std::vector<int> const& flows, std::vector<int> const& path)
+{
+    return pathScore_it(apsp, flows, path.begin(), path.end());
 }
 
 std::vector<int> extractFlows(std::vector<Valve> const& valves, ValveIndexMap const& vmap)
@@ -146,8 +151,30 @@ std::vector<int> extractFlows(std::vector<Valve> const& valves, ValveIndexMap co
     return flows;
 }
 
+bool skipPermutations_it(std::vector<int>::iterator it_begin,
+                         std::vector<int>::iterator it_end,
+                         std::vector<int>::iterator it_skip_from)
+{
+    std::sort(it_skip_from + 1, it_end);
+    // find the smallest element larger than the skip and swap with it
+    auto const it_swap = std::find_if(it_skip_from + 1, it_end,
+                                      [skip_element = *it_skip_from](int i) { return i > skip_element; });
+    if (it_swap != it_end) {
+        std::iter_swap(it_skip_from, it_swap);
+    } else {
+        // swap element is larger than succeeding elements; skip to last permutation in range
+        // which has the succeeding elements ordered from biggest to smallest
+        std::reverse(it_skip_from + 1, it_end);
+        if (!std::next_permutation(it_begin, it_end)) {
+            return false;
+        }
+    }
+    return true;
+}
+
 bool skipPermutations(std::vector<int>& rng, int skip_from)
 {
+    /*
     auto it_from = rng.begin() + skip_from;
     std::sort(it_from + 1, rng.end());
     // find the smallest element larger than the skip and swap with it
@@ -163,6 +190,8 @@ bool skipPermutations(std::vector<int>& rng, int skip_from)
         }
     }
     return true;
+    */
+    return skipPermutations_it(rng.begin(), rng.end(), rng.begin() + skip_from);
 }
 
 void printRange(std::vector<int> const& r)
@@ -238,3 +267,72 @@ int64_t answer1(std::vector<Valve> const& valves)
 
     return best_score;
 }
+
+PathScore pathScore2(Matrix const& apsp, std::vector<int> const& flows, std::vector<int> const& path)
+{
+    int score_me = 0;
+    int score_elephant = 0;
+    int minutes_remain_me = 26;
+    int minutes_remain_elephant = 26;
+    int current_node_me = 0;
+    int current_node_elephant = 0;
+    int terminates_at = 0;
+    bool my_turn = true;
+    std::experimental::mdspan m(apsp.m.data(), apsp.dimension, apsp.dimension);
+    int const valve_open = 1;
+    for (auto const& n : path) {
+        if ((my_turn || (minutes_remain_elephant <= 0)) && (minutes_remain_me > 0)) {
+            // me
+            int const path_cost = m(current_node_me, n);
+            minutes_remain_me -= path_cost + valve_open;
+            if (minutes_remain_me > 0) {
+                score_me += minutes_remain_me * flows[n];
+                current_node_me = n;
+            }
+            my_turn = false;
+        } else if (minutes_remain_elephant > 0) {
+            // elephant
+            int const path_cost = m(current_node_elephant, n);
+            minutes_remain_elephant -= path_cost + valve_open;
+            if (minutes_remain_elephant > 0) {
+                score_elephant += minutes_remain_elephant * flows[n];
+                current_node_elephant = n;
+            }
+            my_turn = true;
+        }
+        if ((minutes_remain_me <= 0) && (minutes_remain_elephant <= 0)) { break; }
+        ++terminates_at;
+    }
+    return PathScore{ .score = score_me + score_elephant, .terminatesAt = terminates_at };
+}
+
+int64_t answer2(std::vector<Valve> const& valves)
+{
+    auto const vmap = valveIndexMap(valves);
+    auto const apsp = allPairsShortestPath(adjacency(valves, vmap));
+    std::experimental::mdspan m(apsp.m.data(), apsp.dimension, apsp.dimension);
+
+    std::vector<int> const flows = extractFlows(valves, vmap);
+    std::vector<int> nodes_with_flow;
+    for (int i = 0; i < static_cast<int>(flows.size()); ++i) {
+        if (flows[i] > 0) { nodes_with_flow.push_back(i); }
+    }
+    assert(std::is_sorted(nodes_with_flow.begin(), nodes_with_flow.end()));
+
+    // all permutations
+    int best_score = 0;
+    for (;;) {
+        auto const [new_score, terminates_at] = pathScore2(apsp, flows, nodes_with_flow);
+        best_score = std::max(best_score, new_score);
+        if (terminates_at < static_cast<int>(nodes_with_flow.size()) - 1) {
+            if (!skipPermutations(nodes_with_flow, terminates_at)) {
+                break;
+            }
+        } else if (!std::next_permutation(nodes_with_flow.begin(), nodes_with_flow.end())) {
+            break;
+        }
+    }
+
+    return best_score;
+}
+

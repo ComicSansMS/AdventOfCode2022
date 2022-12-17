@@ -79,4 +79,9 @@ TEST_CASE("Proboscidea Volcanium")
     {
         CHECK(answer1(valves) == 1651);
     }
+
+    SECTION("Answer 2")
+    {
+        CHECK(answer2(valves) == 1707);
+    }
 }
