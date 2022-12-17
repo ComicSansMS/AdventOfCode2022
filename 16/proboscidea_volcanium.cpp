@@ -1,0 +1,240 @@
+#include <proboscidea_volcanium.hpp>
+
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/range/primitives.hpp>
+#include <range/v3/algorithm/sort.hpp>
+#include <range/v3/view/transform.hpp>
+
+#include <fmt/format.h>
+
+#include <algorithm>
+#include <cassert>
+#include <cmath>
+#include <regex>
+
+
+std::vector<Valve> parseInput(std::string_view input)
+{
+    //                            1                    2                                           3
+    std::regex rx_line(R"(Valve (\w\w) has flow rate=(\d+); tunnel(?:s?) lead(?:s?) to valve(?:s?) ((?:(?:\w\w)(?:, )?)+))");
+    
+
+    using regex_it = std::regex_iterator<std::string_view::iterator>;
+    auto const it_begin = regex_it(begin(input), end(input), rx_line);
+    auto const it_end = regex_it();
+
+    auto parseLine = [](std::match_results<std::string_view::iterator> const& match) -> Valve {
+        Valve ret;
+        ret.name = match[1];
+        ret.flow_rate = std::stoi(match[2]);
+        
+        using regex_it = std::regex_iterator<std::string_view::iterator>;
+        std::regex rx(R"((\w\w))");
+        auto const it_begin = regex_it(match[3].first, match[3].second, rx);
+        auto const it_end = regex_it();
+        ret.connections = ranges::make_subrange(it_begin, it_end)
+            | ranges::views::transform([](auto&& m) -> std::string { return m[1]; })
+            | ranges::to<std::vector>;
+        return ret;
+    };
+
+    std::vector<Valve> ret = ranges::make_subrange(it_begin, it_end) | ranges::views::transform(parseLine) | ranges::to<std::vector>;
+    ranges::sort(ret, [](Valve const& lhs, Valve const& rhs) { return lhs.name < rhs.name; });
+    return ret;
+}
+
+std::string toDot(std::vector<Valve> const& valves)
+{
+    std::string ret;
+    ret = "digraph D {" "\n";
+    for (auto const& v : valves) {
+        ret += fmt::format(R"(  {} [shape=box, label="{} - {}"])" "\n", v.name, v.name, v.flow_rate);
+    }
+    ret += "\n";
+    for (auto const& v : valves) {
+        std::string const& src = v.name;
+        for (auto const& dst : v.connections) {
+            ret += fmt::format("  {} -> {}\n", src, dst);
+        }
+    }
+    ret += "}\n";
+    return ret;
+}
+
+ValveIndexMap valveIndexMap(std::vector<Valve> const& valves)
+{
+    ValveIndexMap ret;
+    for (int i = 0; i < static_cast<int>(valves.size()); ++i) {
+        ret[valves[i].name] = i;
+    }
+    assert(ret.at("AA") == 0);
+    return ret;
+}
+
+Matrix adjacency(std::vector<Valve> const& valves, ValveIndexMap const& vmap)
+{
+    Matrix m;
+    m.dimension = static_cast<int>(valves.size());
+    m.m.resize(m.dimension * m.dimension, -1);
+    std::experimental::mdspan mds(m.m.data(), m.dimension, m.dimension);
+    for (auto const& v : valves) {
+        for (auto const& t : v.connections) {
+            mds(vmap.at(v.name), vmap.at(t)) = 1;
+        }
+        mds(vmap.at(v.name), vmap.at(v.name)) = 0;
+    }
+    return m;
+}
+
+Matrix extendPaths(Matrix const& m)
+{
+    Matrix r = m;
+    std::experimental::mdspan sm(m.m.data(), m.dimension, m.dimension);
+    std::experimental::mdspan sr(r.m.data(), r.dimension, r.dimension);
+    for (int i = 0; i < m.dimension; ++i) {
+        for (int j = 0; j < m.dimension; ++j) {
+            sr(i, j) = -1;
+            for (int k = 0; k < m.dimension; ++k) {
+                auto const m_ik = sm(i, k);
+                auto const m_kj = sm(k, j);
+                if ((m_ik != -1) && (m_kj != -1)) {
+                    int const candidate = m_ik + m_kj;
+                    sr(i, j) = (sr(i, j) == -1) ? candidate : std::min(sr(i, j), candidate);
+                }
+            }
+        }
+    }
+    return r;
+}
+
+Matrix allPairsShortestPath(Matrix const& m)
+{
+    Matrix r = m;
+    for (int i = 0; i < m.dimension; ++i) {
+        r = extendPaths(r);
+    }
+    return r;
+}
+
+PathScore pathScore(Matrix const& apsp, std::vector<int> const& flows, std::vector<int> const& path)
+{
+    int score = 0;
+    int minutes_remain = 30;
+    int current_node = 0;
+    int terminates_at = 0;
+    std::experimental::mdspan m(apsp.m.data(), apsp.dimension, apsp.dimension);
+    for (auto const& n : path) {
+        int const path_cost = m(current_node, n);
+        int const valve_open = 1;
+        minutes_remain -= path_cost + valve_open;
+        if (minutes_remain < 0) { break; }
+        score += minutes_remain * flows[n];
+        current_node = n;
+        ++terminates_at;
+    }
+    return PathScore{ .score = score, .terminatesAt = terminates_at };
+
+}
+
+std::vector<int> extractFlows(std::vector<Valve> const& valves, ValveIndexMap const& vmap)
+{
+    std::vector<int> flows;
+    flows.resize(valves.size(), -1);
+    for (auto const& v : valves) {
+        flows[vmap.at(v.name)] = v.flow_rate;
+    }
+    return flows;
+}
+
+bool skipPermutations(std::vector<int>& rng, int skip_from)
+{
+    auto it_from = rng.begin() + skip_from;
+    std::sort(it_from + 1, rng.end());
+    // find the smallest element larger than the skip and swap with it
+    auto const it_swap = std::find_if(it_from + 1, rng.end(), [skip_element = rng[skip_from]](int i) { return i > skip_element; });
+    if (it_swap != rng.end()) {
+        std::iter_swap(it_from, it_swap);
+    } else {
+        // swap element is larger than succeeding elements; skip to last permutation in range
+        // which has the succeeding elements ordered from biggest to smallest
+        std::reverse(it_from + 1, rng.end());
+        if (!std::next_permutation(rng.begin(), rng.end())) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void printRange(std::vector<int> const& r)
+{
+    fmt::print("( ");
+    for (auto const& i : r) {
+        fmt::print("{} ", i);
+    }
+    fmt::print(")\n");
+}
+
+int64_t answer1(std::vector<Valve> const& valves)
+{
+    auto const vmap = valveIndexMap(valves);
+    auto const apsp = allPairsShortestPath(adjacency(valves, vmap));
+    std::experimental::mdspan m(apsp.m.data(), apsp.dimension, apsp.dimension);
+
+    std::vector<int> const flows = extractFlows(valves, vmap);
+    std::vector<int> nodes_with_flow;
+    for (int i = 0; i < static_cast<int>(flows.size()); ++i) {
+        if (flows[i] > 0) { nodes_with_flow.push_back(i); }
+    }
+    assert(std::is_sorted(nodes_with_flow.begin(), nodes_with_flow.end()));
+
+    /*
+    //"insertion sort" approach; doesn't work: order CC and BB is wrong
+    std::vector<int> best_path;
+    best_path.reserve(nodes_with_flow.size());
+    best_path.push_back(nodes_with_flow[0]);
+    int best_score = -1;
+    for (int i = 1; i < nodes_with_flow.size(); ++i) {
+        std::size_t candidate_pos = 0;
+        for (std::size_t pos = 0; pos <= best_path.size(); ++pos) {
+            best_path.insert(best_path.begin() + pos, nodes_with_flow[i]);
+            int const candidate_score = pathScore(apsp, flows, best_path);
+            if (candidate_score > best_score) {
+                candidate_pos = pos;
+                best_score = candidate_score;
+            }
+            best_path.erase(best_path.begin() + pos);
+        }
+        best_path.insert(best_path.begin() + candidate_pos, nodes_with_flow[i]);
+    }
+    */
+
+    // all permutations
+    int best_score = 0;
+    for (;;) {
+        auto const [new_score, terminates_at] = pathScore(apsp, flows, nodes_with_flow);
+        best_score = std::max(best_score, new_score);
+        if (terminates_at < static_cast<int>(nodes_with_flow.size()) - 1) {
+            if (!skipPermutations(nodes_with_flow, terminates_at)) {
+                break;
+            }
+        } else if (!std::next_permutation(nodes_with_flow.begin(), nodes_with_flow.end())) {
+            break;
+        }
+    }
+
+    // bfs
+    /*
+    int best_score = 0;
+    std::vector<int> stack;
+    stack.push_back(0);
+
+    while (!stack.empty()) {
+        int const current_n = stack.back();
+        stack.pop_back();
+        std::vector<int> neighbours = nodes_with_flow;
+
+    }
+    */
+
+    return best_score;
+}
