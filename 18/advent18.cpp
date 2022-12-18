@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
 
     auto const points = parseInput(*input);
     fmt::print("First result is {}\n", answer1(points));
-    //fmt::print("Second result is {}\n", answer2(instructions, true));
+    fmt::print("Second result is {}\n", answer2(points));
 
     return 0;
 }

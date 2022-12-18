@@ -46,4 +46,9 @@ TEST_CASE("Boiling Boulders")
     {
         CHECK(answer1(points) == 64);
     }
+
+    SECTION("Answer 2")
+    {
+        CHECK(answer2(points) == 58);
+    }
 }

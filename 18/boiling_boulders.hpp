@@ -59,4 +59,6 @@ std::vector<Point> parseInput(std::string_view input);
 
 int answer1(std::vector<Point> const& points);
 
+int answer2(std::vector<Point> const& points);
+
 #endif
