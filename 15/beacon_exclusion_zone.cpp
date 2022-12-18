@@ -19,8 +19,6 @@ std::vector<SensorBeaconPair> parseInput(std::string_view input)
     auto const it_end = regex_it();
 
     auto parseLine = [](std::match_results<std::string_view::iterator> const& match) -> SensorBeaconPair {
-        SensorBeaconPair sb;
-        sb.sensor.x = std::stoi(match[1]);
         return SensorBeaconPair{ .sensor = Point{.x = std::stoi(match[1]), .y = std::stoi(match[2]) },
                                  .beacon = Point{.x = std::stoi(match[3]), .y = std::stoi(match[4]) } };
     };

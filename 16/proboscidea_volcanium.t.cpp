@@ -51,8 +51,8 @@ TEST_CASE("Proboscidea Volcanium")
         CHECK(mds(vmap.at("AA"), vmap.at("DD")) == 1);
         CHECK(mds(vmap.at("AA"), vmap.at("HH")) == 5);
         CHECK(mds(vmap.at("JJ"), vmap.at("HH")) == 7);
-        for (int i = 0; i < mds.extent(0); ++i) {
-            for (int j = 0; j < mds.extent(1); ++j) {
+        for (std::size_t i = 0; i < mds.extent(0); ++i) {
+            for (std::size_t j = 0; j < mds.extent(1); ++j) {
                 CHECK(mds(i, j) == mds(j, i));
             }
         }

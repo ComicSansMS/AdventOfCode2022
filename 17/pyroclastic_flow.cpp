@@ -76,8 +76,8 @@ bool doesCollide(Field const& f, Rock const& r, Point const& p)
 {
     std::experimental::mdspan mds(r.cells.data(), r.width, r.height);
     Point const p_ul{ .x = p.x, .y = p.y + r.height };
-    for (int iy = 0; iy < mds.extent(1); ++iy) {
-        for (int ix = 0; ix < mds.extent(0); ++ix) {
+    for (int iy = 0; iy < static_cast<int>(mds.extent(1)); ++iy) {
+        for (int ix = 0; ix < static_cast<int>(mds.extent(0)); ++ix) {
             if (mds(ix, iy) == Cell::Rock) {
                 Point p_check{ .x = p_ul.x + ix, .y = p_ul.y - iy };
                 if ((p_check.x < 0) || (p_check.x >= 7) || (p_check.y <= 0)) { return true; }
@@ -92,8 +92,8 @@ void placeRock(Field& f, Rock const& r, Point const& p)
 {
     std::experimental::mdspan mds(r.cells.data(), r.width, r.height);
     Point const p_ul{ .x = p.x, .y = p.y + r.height };
-    for (int iy = 0; iy < mds.extent(1); ++iy) {
-        for (int ix = 0; ix < mds.extent(0); ++ix) {
+    for (int iy = 0; iy < static_cast<int>(mds.extent(1)); ++iy) {
+        for (int ix = 0; ix < static_cast<int>(mds.extent(0)); ++ix) {
             if (mds(ix, iy) == Cell::Rock) {
                 Point p_place{ .x = p_ul.x + ix, .y = p_ul.y - iy };
                 assert((p_place.x >= 0) && (p_place.x < 7) && (p_place.y > 0) && (!f.rock_cells.contains(p_place)));
