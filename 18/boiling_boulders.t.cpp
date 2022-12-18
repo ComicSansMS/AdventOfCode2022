@@ -6,6 +6,13 @@
 
 TEST_CASE("Boiling Boulders")
 {
+    SECTION("Print Point")
+    {
+        std::stringstream sstr;
+        sstr << Point{ .x = 42, .y = 23, .z = -17 };
+        CHECK(sstr.str() == "(42, 23, -17)");
+    }
+
     char const sample_input[] =
         "2,2,2" "\n"
         "1,2,2" "\n"
