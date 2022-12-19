@@ -43,6 +43,7 @@ std::vector<Valve> parseInput(std::string_view input)
     return ret;
 }
 
+// LCOV_EXCL_START
 std::string toDot(std::vector<Valve> const& valves)
 {
     std::string ret;
@@ -60,6 +61,7 @@ std::string toDot(std::vector<Valve> const& valves)
     ret += "}\n";
     return ret;
 }
+// LCOV_EXCL_STOP
 
 ValveIndexMap valveIndexMap(std::vector<Valve> const& valves)
 {
@@ -151,6 +153,8 @@ std::vector<int> extractFlows(std::vector<Valve> const& valves, ValveIndexMap co
     return flows;
 }
 
+// Test sample is not complex enough to trigger skipping
+// LCOV_EXCL_START
 bool skipPermutations_it(std::vector<int>::iterator it_begin,
                          std::vector<int>::iterator it_end,
                          std::vector<int>::iterator it_skip_from)
@@ -174,34 +178,9 @@ bool skipPermutations_it(std::vector<int>::iterator it_begin,
 
 bool skipPermutations(std::vector<int>& rng, int skip_from)
 {
-    /*
-    auto it_from = rng.begin() + skip_from;
-    std::sort(it_from + 1, rng.end());
-    // find the smallest element larger than the skip and swap with it
-    auto const it_swap = std::find_if(it_from + 1, rng.end(), [skip_element = rng[skip_from]](int i) { return i > skip_element; });
-    if (it_swap != rng.end()) {
-        std::iter_swap(it_from, it_swap);
-    } else {
-        // swap element is larger than succeeding elements; skip to last permutation in range
-        // which has the succeeding elements ordered from biggest to smallest
-        std::reverse(it_from + 1, rng.end());
-        if (!std::next_permutation(rng.begin(), rng.end())) {
-            return false;
-        }
-    }
-    return true;
-    */
     return skipPermutations_it(rng.begin(), rng.end(), rng.begin() + skip_from);
 }
-
-void printRange(std::vector<int> const& r)
-{
-    fmt::print("( ");
-    for (auto const& i : r) {
-        fmt::print("{} ", i);
-    }
-    fmt::print(")\n");
-}
+// LCOV_EXCL_STOP
 
 int64_t answer1(std::vector<Valve> const& valves)
 {
@@ -216,54 +195,19 @@ int64_t answer1(std::vector<Valve> const& valves)
     }
     assert(std::is_sorted(nodes_with_flow.begin(), nodes_with_flow.end()));
 
-    /*
-    //"insertion sort" approach; doesn't work: order CC and BB is wrong
-    std::vector<int> best_path;
-    best_path.reserve(nodes_with_flow.size());
-    best_path.push_back(nodes_with_flow[0]);
-    int best_score = -1;
-    for (int i = 1; i < nodes_with_flow.size(); ++i) {
-        std::size_t candidate_pos = 0;
-        for (std::size_t pos = 0; pos <= best_path.size(); ++pos) {
-            best_path.insert(best_path.begin() + pos, nodes_with_flow[i]);
-            int const candidate_score = pathScore(apsp, flows, best_path);
-            if (candidate_score > best_score) {
-                candidate_pos = pos;
-                best_score = candidate_score;
-            }
-            best_path.erase(best_path.begin() + pos);
-        }
-        best_path.insert(best_path.begin() + candidate_pos, nodes_with_flow[i]);
-    }
-    */
-
     // all permutations
     int best_score = 0;
     for (;;) {
         auto const [new_score, terminates_at] = pathScore(apsp, flows, nodes_with_flow);
         best_score = std::max(best_score, new_score);
         if (terminates_at < static_cast<int>(nodes_with_flow.size()) - 1) {
-            if (!skipPermutations(nodes_with_flow, terminates_at)) {
-                break;
+            if (!skipPermutations(nodes_with_flow, terminates_at)) {                                // LCOV_EXCL_LINE
+                break;                                                                              // LCOV_EXCL_LINE
             }
         } else if (!std::next_permutation(nodes_with_flow.begin(), nodes_with_flow.end())) {
             break;
         }
     }
-
-    // bfs
-    /*
-    int best_score = 0;
-    std::vector<int> stack;
-    stack.push_back(0);
-
-    while (!stack.empty()) {
-        int const current_n = stack.back();
-        stack.pop_back();
-        std::vector<int> neighbours = nodes_with_flow;
-
-    }
-    */
 
     return best_score;
 }
@@ -325,8 +269,8 @@ int64_t answer2(std::vector<Valve> const& valves)
         auto const [new_score, terminates_at] = pathScore2(apsp, flows, nodes_with_flow);
         best_score = std::max(best_score, new_score);
         if (terminates_at < static_cast<int>(nodes_with_flow.size()) - 1) {
-            if (!skipPermutations(nodes_with_flow, terminates_at)) {
-                break;
+            if (!skipPermutations(nodes_with_flow, terminates_at)) {                            // LCOV_EXCL_LINE
+                break;                                                                          // LCOV_EXCL_LINE
             }
         } else if (!std::next_permutation(nodes_with_flow.begin(), nodes_with_flow.end())) {
             break;

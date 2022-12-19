@@ -5,7 +5,6 @@ add_executable(advent19 advent19.cpp)
 target_link_libraries(advent19 PUBLIC 19_not_enough_minerals)
 
 if (DEFINED ENV{CI})
-    message(STATUS "?!# CMAKE - CI detected")
     target_compile_definitions(advent19 PUBLIC RUNS_IN_CI)
 endif()
 

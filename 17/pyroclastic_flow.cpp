@@ -146,7 +146,6 @@ bool isSolidLine(Field const& f, int y)
     if (str == "#######") { return true; }
     str = ".......";
     for (int ix = 0; ix < 7; ++ix) {
-        Point p{ .x = ix, .y = y };
         if (f.rock_cells.contains(Point{ .x = ix, .y = y }) ||
             f.rock_cells.contains(Point{ .x = ix, .y = y - 1 }) ||
             f.rock_cells.contains(Point{ .x = ix, .y = y - 2 }) ||
