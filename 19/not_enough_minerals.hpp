@@ -56,6 +56,7 @@ bool canBuildClay(Blueprint const& b, State const& s);
 bool canBuildObsidian(Blueprint const& b, State const& s);
 bool canBuildGeode(Blueprint const& b, State const& s);
 
+int determineMostGeodes(Blueprint const& b, int minutes_remain);
 int scoreBlueprint(Blueprint const& b);
 
 int answer1(std::vector<Blueprint> const& blueprints);

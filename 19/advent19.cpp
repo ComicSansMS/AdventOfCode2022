@@ -44,7 +44,10 @@ int main(int argc, char* argv[])
 
     auto const blueprints = parseInput(*input);
     fmt::print("First result is {}\n", answer1(blueprints));
-    //fmt::print("Second result is {}\n", answer2(points));
+    int const i1 = determineMostGeodes(blueprints[0], 32);
+    int const i2 = determineMostGeodes(blueprints[1], 32);
+    int const i3 = determineMostGeodes(blueprints[2], 32);
+    fmt::print("Second result is {}\n", i1 * i2 * i3);
 
     return 0;
 }

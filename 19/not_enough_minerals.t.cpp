@@ -41,7 +41,7 @@ TEST_CASE("Not Enough Minerals")
 
     SECTION("Score Blueprints")
     {
-        //CHECK(scoreBlueprint(blueprints[0]) == 9);
+        CHECK(scoreBlueprint(blueprints[0]) == 9);
         CHECK(scoreBlueprint(blueprints[1]) == 24);
     }
 
@@ -49,4 +49,12 @@ TEST_CASE("Not Enough Minerals")
     {
         CHECK(answer1(blueprints) == 33);
     }
+
+#ifdef NDEBUG
+    SECTION("Answer 2")
+    {
+        //CHECK(determineMostGeodes(blueprints[0], 32) == 56);      // this one is kind of slow still
+        CHECK(determineMostGeodes(blueprints[1], 32) == 62);
+    }
+#endif
 }

@@ -109,24 +109,33 @@ int estimateMaxGeodes(State const& s)
     return s.geode + (s.geode_robot * s.minutes_remain) + (((s.minutes_remain + 1) * s.minutes_remain) / 2);
 }
 
-int determineMostGeodes(Blueprint const& b)
+int estimateMaxGeodes2(Blueprint const& b, State const& s)
+{
+    // aggressive pruning
+    int const o = b.geode_robot.obsidian_cost;
+    int const max_obsidian = (s.obsidian_robot * s.minutes_remain) + (((s.minutes_remain + 1) * s.minutes_remain) / 2);
+    // estimated max additional geode robots
+    int const max_new_robots = ((s.obsidian + max_obsidian) / o);
+    // assume current geodes and geodes from current robots, plus maximum geodes of additional robots
+    return s.geode + (s.geode_robot * s.minutes_remain) + (((max_new_robots + 1) * max_new_robots) / 2);
+}
+
+int determineMostGeodes(Blueprint const& b, int minutes_remain)
 {
     std::vector<State> stack;
     stack.emplace_back();
+    stack.back().minutes_remain = minutes_remain;
     int most_geodes = 0;
-    fmt::print("ID {}\n", b.id);
 
     while (!stack.empty()) {
         State s = stack.back();
         stack.pop_back();
         assert(s.minutes_remain >= 0);
         if (s.minutes_remain == 0) {
-            if (s.geode > most_geodes) { fmt::print("{}\n", s.geode); }
             most_geodes = std::max(most_geodes, s.geode);
             continue;
         }
-        if (estimateMaxGeodes(s) <= most_geodes) {
-            //fmt::print("Prune at {} with estimate {}\n", s.minutes_remain, estimateMaxGeodes(s));
+        if (estimateMaxGeodes2(b, s) <= most_geodes) {
             // prune path
             continue;
         }
@@ -135,11 +144,14 @@ int determineMostGeodes(Blueprint const& b)
         bool const can_build_obsidian = canBuildObsidian(b, s);
         bool const can_build_geode = canBuildGeode(b, s);
         collectMinerals(s);
-        if (can_build_geode) { stack.emplace_back(buildGeode(b, s)); }
-        if (can_build_obsidian) { stack.emplace_back(buildObsidian(b, s)); }
-        if (can_build_clay) { stack.emplace_back(buildClay(b, s)); }
-        if (can_build_ore) { stack.emplace_back(buildOre(b, s)); }
-        stack.push_back(s);
+        if (!can_build_geode) {
+            stack.push_back(s);
+            if (can_build_ore) { stack.emplace_back(buildOre(b, s)); }
+            if (can_build_clay) { stack.emplace_back(buildClay(b, s)); }
+            if (can_build_obsidian) { stack.emplace_back(buildObsidian(b, s)); }
+        } else {
+            stack.emplace_back(buildGeode(b, s));
+        }
     }
 
     return most_geodes;
@@ -147,7 +159,7 @@ int determineMostGeodes(Blueprint const& b)
 
 int scoreBlueprint(Blueprint const& b)
 {
-    return determineMostGeodes(b) * b.id;
+    return determineMostGeodes(b, 24) * b.id;
 }
 
 int answer1(std::vector<Blueprint> const& blueprints)
