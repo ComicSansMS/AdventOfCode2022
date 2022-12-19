@@ -42,12 +42,16 @@ int main(int argc, char* argv[])
         return 1;
     }
 
+#ifdef RUNS_IN_CI
+    fmt::print("Day 19 is too slow for CI.\n");
+#else
     auto const blueprints = parseInput(*input);
     fmt::print("First result is {}\n", answer1(blueprints));
     int const i1 = determineMostGeodes(blueprints[0], 32);
     int const i2 = determineMostGeodes(blueprints[1], 32);
     int const i3 = determineMostGeodes(blueprints[2], 32);
     fmt::print("Second result is {}\n", i1 * i2 * i3);
+#endif
 
     return 0;
 }
