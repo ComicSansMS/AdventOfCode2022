@@ -103,13 +103,7 @@ void collectMinerals(State& s)
     --s.minutes_remain;
 }
 
-int estimateMaxGeodes(State const& s)
-{
-    // all the current robots + 1 new robot built every minute
-    return s.geode + (s.geode_robot * s.minutes_remain) + (((s.minutes_remain + 1) * s.minutes_remain) / 2);
-}
-
-int estimateMaxGeodes2(Blueprint const& b, State const& s)
+int estimateMaxGeodes(Blueprint const& b, State const& s)
 {
     // aggressive pruning
     int const o = b.geode_robot.obsidian_cost;
@@ -135,7 +129,7 @@ int determineMostGeodes(Blueprint const& b, int minutes_remain)
             most_geodes = std::max(most_geodes, s.geode);
             continue;
         }
-        if (estimateMaxGeodes2(b, s) <= most_geodes) {
+        if (estimateMaxGeodes(b, s) <= most_geodes) {
             // prune path
             continue;
         }
