@@ -19,7 +19,7 @@ struct Tracker {
     std::list<int64_t>::iterator it;
 };
 
-std::vector<Tracker> buildTracker(std::list<int64_t>& l);
+std::vector<Tracker> buildTrackers(std::list<int64_t>& l);
 
 void decodeStep(std::list<int64_t>& l, Tracker const& t);
 

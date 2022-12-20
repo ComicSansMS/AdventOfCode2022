@@ -113,7 +113,7 @@ TEST_CASE("Grove Positioning System")
             CHECK(l2 == std::list<int64_t>{ 2, -3, 3, -2, 0, 1, 4, });
         }
         auto l = numbers;
-        auto const t = buildTracker(l);
+        auto const t = buildTrackers(l);
         REQUIRE(t.size() == 7);
         CHECK(l == std::list<int64_t>{ 1, 2, -3, 3, -2, 0, 4 });
         // 1 moves between 2 and -3:
@@ -151,10 +151,15 @@ TEST_CASE("Grove Positioning System")
         CHECK(answer1(numbers) == 3);
     }
 
+    auto zeroToFront = [](std::list<int64_t> l) {
+        std::rotate(l.begin(), std::find(l.begin(), l.end(), 0), l.end());
+        return l;
+    };
+
     SECTION("Decode 2")
     {
         auto l = applyDecryptionKey(numbers);
-        auto const trackers = buildTracker(l);
+        auto const trackers = buildTrackers(l);
         CHECK(l == std::list<int64_t>{ 811589153, 1623178306, -2434767459, 2434767459, -1623178306, 0, 3246356612 });
         // round 1
         decode(l, trackers);
@@ -162,13 +167,37 @@ TEST_CASE("Grove Positioning System")
         // round 2
         decode(l, trackers);
         CHECK(l == std::list<int64_t>{ 0, 2434767459, 1623178306, 3246356612, -2434767459, -1623178306, 811589153 });
+        // round 3
+        decode(l, trackers);
+        CHECK(zeroToFront(l) == std::list<int64_t>{ 0, 811589153, 2434767459, 3246356612, 1623178306, -1623178306, -2434767459 });
+        // round 4
+        decode(l, trackers);
+        CHECK(zeroToFront(l) == std::list<int64_t>{ 0, 1623178306, -2434767459, 811589153, 2434767459, 3246356612, -1623178306 });
+        // round 5
+        decode(l, trackers);
+        CHECK(zeroToFront(l) == std::list<int64_t>{ 0, 811589153, -1623178306, 1623178306, -2434767459, 3246356612, 2434767459 });
+        // round 6
+        decode(l, trackers);
+        CHECK(zeroToFront(l) == std::list<int64_t>{ 0, 811589153, -1623178306, 3246356612, -2434767459, 1623178306, 2434767459 });
+        // round 7
+        decode(l, trackers);
+        CHECK(zeroToFront(l) == std::list<int64_t>{ 0, -2434767459, 2434767459, 1623178306, -1623178306, 811589153, 3246356612 });
+        // round 8
+        decode(l, trackers);
+        CHECK(zeroToFront(l) == std::list<int64_t>{ 0, 1623178306, 3246356612, 811589153, -2434767459, 2434767459, -1623178306 });
+        // round 9
+        decode(l, trackers);
+        CHECK(zeroToFront(l) == std::list<int64_t>{ 0, 811589153, 1623178306, -2434767459, 3246356612, 2434767459, -1623178306 });
+        // round 10
+        decode(l, trackers);
+        CHECK(zeroToFront(l) == std::list<int64_t>{ 0, -2434767459, 1623178306, 3246356612, -1623178306, 2434767459, 811589153 });
     }
 
     SECTION("Decode 2")
     {
         auto l = applyDecryptionKey(numbers);
         decode2(l);
-        CHECK(l == std::list<int64_t>{ -2434767459, 1623178306, 3246356612, -1623178306, 2434767459, 811589153, 0 });
+        CHECK(zeroToFront(l) == std::list<int64_t>{ 0, -2434767459, 1623178306, 3246356612, -1623178306, 2434767459, 811589153 });
     }
 
     SECTION("Answer 2")
