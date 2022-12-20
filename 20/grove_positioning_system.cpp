@@ -91,24 +91,13 @@ int64_t getElement(std::list<int64_t> const& l, std::size_t at)
     return *it;
 }
 
-std::tuple<std::list<int64_t>::const_iterator, int64_t> findWithOffset(std::list<int64_t>::const_iterator it_begin, std::list<int64_t>::const_iterator it_end, int64_t value)
-{
-    int64_t offset = 0;
-    for (auto it = it_begin; it != it_end; ++it, ++offset) {
-        if (*it == value) {
-            return std::make_tuple(it, offset);
-        }
-    }
-    return std::make_tuple(it_end, -1);
-}
-
 int64_t answer1(std::list<int64_t> l)
 {
     decode(l);
-    auto const [it0, offset0] = findWithOffset(l.begin(), l.end(), 0);
-    int64_t const i1 = (offset0 + 1000) % static_cast<int64_t>(l.size());
-    int64_t const i2 = (offset0 + 2000) % static_cast<int64_t>(l.size());
-    int64_t const i3 = (offset0 + 3000) % static_cast<int64_t>(l.size());
+    int64_t const index0 = std::distance(l.begin(), std::find(l.begin(), l.end(), 0));
+    int64_t const i1 = (index0 + 1000) % static_cast<int64_t>(l.size());
+    int64_t const i2 = (index0 + 2000) % static_cast<int64_t>(l.size());
+    int64_t const i3 = (index0 + 3000) % static_cast<int64_t>(l.size());
     int64_t const n1 = getElement(l, i1);
     int64_t const n2 = getElement(l, i2);
     int64_t const n3 = getElement(l, i3);
@@ -136,10 +125,10 @@ int64_t answer2(std::list<int64_t> const& numbers)
 {
     auto l = applyDecryptionKey(numbers);
     decode2(l);
-    auto const [it0, offset0] = findWithOffset(l.begin(), l.end(), 0);
-    int64_t const i1 = (offset0 + 1000) % static_cast<int64_t>(l.size());
-    int64_t const i2 = (offset0 + 2000) % static_cast<int64_t>(l.size());
-    int64_t const i3 = (offset0 + 3000) % static_cast<int64_t>(l.size());
+    int64_t const index0 = std::distance(l.begin(), std::find(l.begin(), l.end(), 0));
+    int64_t const i1 = (index0 + 1000) % static_cast<int64_t>(l.size());
+    int64_t const i2 = (index0 + 2000) % static_cast<int64_t>(l.size());
+    int64_t const i3 = (index0 + 3000) % static_cast<int64_t>(l.size());
     int64_t const n1 = getElement(l, i1);
     int64_t const n2 = getElement(l, i2);
     int64_t const n3 = getElement(l, i3);
