@@ -67,7 +67,7 @@ void decodeStep(std::list<int64_t>& l, Tracker const& t)
     moveTo(l, t.it, new_it);
 }
 
-inline void decode(std::list<int64_t>& l, std::vector<Tracker> const& trackers)
+void decode(std::list<int64_t>& l, std::vector<Tracker> const& trackers)
 {
     for (auto const& t : trackers) {
         decodeStep(l, t);
