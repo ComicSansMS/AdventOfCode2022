@@ -168,7 +168,7 @@ int64_t reduceNumber(int64_t n, Operation::Operator op, int64_t operand, bool op
         return n - operand;
     } else if (op == Operation::Minus) {
         if (operand_is_left) {
-            return operand - n;
+            return operand - n;                     // LCOV_EXCL_LINE
         } else {
             return n + operand;
         }
@@ -177,7 +177,7 @@ int64_t reduceNumber(int64_t n, Operation::Operator op, int64_t operand, bool op
     } else {
         assert(op == Operation::Divide);
         if (operand_is_left) {
-            return operand / n;
+            return operand / n;                     // LCOV_EXCL_LINE
         } else {
             return n * operand;
         }

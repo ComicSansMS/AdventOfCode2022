@@ -205,6 +205,7 @@ int answer1(Input const& in)
     return scorePosition(pos);
 }
 
+// LCOV_EXCL_START
 Position wrapAroundCube(Map const&, Position p)
 {
     // Assume the following cube layout:
@@ -369,3 +370,4 @@ int answer2(Input const& in)
     }
     return scorePosition(pos);
 }
+// LCOV_EXCL_STOP
