@@ -41,48 +41,33 @@ TEST_CASE("Monkey Math")
             "         .#...... " "\n"
             "         ......#. " "\n"
             "                  " "\n");
-        REQUIRE(input.map.row_width.size() == input.map.height);
-        REQUIRE(input.map.col_height.size() == input.map.width);
+        REQUIRE(static_cast<int>(input.map.row_width.size()) == input.map.height);
+        REQUIRE(static_cast<int>(input.map.col_height.size()) == input.map.width);
         CHECK(input.map.row_width[0] == Range{ .first = -1, .last = -1 });
-        CHECK(input.map.row_width[1] == Range{ .first = 9, .last = 12 });
-        CHECK(input.map.row_width[2] == Range{ .first = 9, .last = 12 });
-        CHECK(input.map.row_width[3] == Range{ .first = 9, .last = 12 });
-        CHECK(input.map.row_width[4] == Range{ .first = 9, .last = 12 });
-        CHECK(input.map.row_width[5] == Range{ .first = 1, .last = 12 });
-        CHECK(input.map.row_width[6] == Range{ .first = 1, .last = 12 });
-        CHECK(input.map.row_width[7] == Range{ .first = 1, .last = 12 });
-        CHECK(input.map.row_width[8] == Range{ .first = 1, .last = 12 });
-        CHECK(input.map.row_width[9] == Range{ .first = 9, .last = 16 });
-        CHECK(input.map.row_width[10] == Range{ .first = 9, .last = 16 });
-        CHECK(input.map.row_width[11] == Range{ .first = 9, .last = 16 });
-        CHECK(input.map.row_width[12] == Range{ .first = 9, .last = 16 });
+        for (int i = 1; i <= 4; ++i) { CHECK(input.map.row_width[i] == Range{ .first = 9, .last = 12 }); }
+        for (int i = 5; i <= 8; ++i) { CHECK(input.map.row_width[i] == Range{ .first = 1, .last = 12 }); }
+        for (int i = 9; i <= 12; ++i) { CHECK(input.map.row_width[i] == Range{ .first = 9, .last = 16 }); }
         CHECK(input.map.row_width[13] == Range{ .first = -1, .last = -1 });
         CHECK(input.map.col_height[0] == Range{ .first = -1, .last = -1 });
-        for (int i = 1; i <= 8; ++i) {
-            CHECK(input.map.col_height[i] == Range{ .first = 5, .last = 8 });
-        }
-        for (int i = 9; i <= 12; ++i) {
-            CHECK(input.map.col_height[i] == Range{ .first = 1, .last = 12 });
-        }
-        for (int i = 13; i <= 16; ++i) {
-            CHECK(input.map.col_height[i] == Range{ .first = 9, .last = 12 });
-        }
+        for (int i = 1; i <= 8; ++i) { CHECK(input.map.col_height[i] == Range{ .first = 5, .last = 8 }); }
+        for (int i = 9; i <= 12; ++i) { CHECK(input.map.col_height[i] == Range{ .first = 1, .last = 12 }); }
+        for (int i = 13; i <= 16; ++i) { CHECK(input.map.col_height[i] == Range{ .first = 9, .last = 12 }); }
         CHECK(input.map.col_height[17] == Range{ .first = -1, .last = -1 });
 
         CHECK(input.path == std::vector<Step>{
             Step{ Forward{.amount = 10 } },
-                Step{ Turn::Right },
-                Step{ Forward{.amount = 5 } },
-                Step{ Turn::Left },
-                Step{ Forward{.amount = 5 } },
-                Step{ Turn::Right },
-                Step{ Forward{.amount = 10 } },
-                Step{ Turn::Left },
-                Step{ Forward{.amount = 4 } },
-                Step{ Turn::Right },
-                Step{ Forward{.amount = 5 } },
-                Step{ Turn::Left },
-                Step{ Forward{.amount = 5 } },
+            Step{ Turn::Right },
+            Step{ Forward{.amount = 5 } },
+            Step{ Turn::Left },
+            Step{ Forward{.amount = 5 } },
+            Step{ Turn::Right },
+            Step{ Forward{.amount = 10 } },
+            Step{ Turn::Left },
+            Step{ Forward{.amount = 4 } },
+            Step{ Turn::Right },
+            Step{ Forward{.amount = 5 } },
+            Step{ Turn::Left },
+            Step{ Forward{.amount = 5 } },
         });
     }
 

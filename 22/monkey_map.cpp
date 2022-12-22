@@ -76,7 +76,7 @@ Input parseInput(std::string_view input)
     for (auto const& l : lines) {
         m.data.push_back(Cell::Void);
         m.data.insert(m.data.end(), l.begin(), l.end());
-        for (auto i = l.size() + 1; i < m.width; ++i) { m.data.push_back(Cell::Void); }
+        for (int i = static_cast<int>(l.size()) + 1; i < m.width; ++i) { m.data.push_back(Cell::Void); }
     }
     m.data.insert(m.data.end(), m.width, Cell::Void);
     assert(static_cast<int>(m.data.size()) == m.width * m.height);
