@@ -173,10 +173,6 @@ int solve(FieldCube const& c, Point const& start, Point const& goal)
     int max_depth = -1;
     for (;;) {
         auto p = posqueue.front();
-        if (isWinning(p)) {
-            max_depth = p.z + 1;
-            break;
-        }
         posqueue.pop_front();
         int const next_depth = p.z + 1;
         if (tryPoint(Point{ .x = p.x, .y = p.y - 1, .z = next_depth }) ||
