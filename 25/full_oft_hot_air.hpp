@@ -38,7 +38,7 @@ struct fmt::formatter<SnafuDigit>
         } else if (d == SnafuDigit::MinusOne) {
             c = '-';
         } else {
-            assert(d == SnafuDigit::MinusTwo);
+            assert(d == SnafuDigit::MinusTwo);          // LCOV_EXCL_LINE
             c = '=';
 
         }
